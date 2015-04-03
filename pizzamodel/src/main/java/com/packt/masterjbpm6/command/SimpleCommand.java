@@ -1,5 +1,6 @@
 package com.packt.masterjbpm6.command;
 
+import org.kie.api.runtime.process.WorkItem;
 import org.kie.internal.executor.api.CommandContext;
 
 import com.packt.masterjbpm6.pizza.model.Pizza;
@@ -10,6 +11,11 @@ public class SimpleCommand implements org.kie.internal.executor.api.Command {
 			CommandContext ctx) {
 		String param1 = (String) ctx.getData("param1");
 
+		WorkItem workitem = (WorkItem) ctx.getData("workItem");
+		String param1_wi = (String) workitem.getParameter("param1");
+		if (param1 == null || param1.length() == 0) {
+			param1 = param1_wi;
+		}
 		System.out
 				.println(String.format(
 						"Command executed on executor with data {param1 = %s}",
@@ -18,7 +24,8 @@ public class SimpleCommand implements org.kie.internal.executor.api.Command {
 		// User user = (User) workItem.getParameter("UserIn");
 		// user.setName(user.getName() + " after command execution");
 		org.kie.internal.executor.api.ExecutionResults executionResults = new org.kie.internal.executor.api.ExecutionResults();
-		executionResults.setData("dataOut", "command terminated");
+		executionResults.setData("dataOut", SimpleCommand.class.getName()
+				+ " terminated");
 
 		return executionResults;
 	}
